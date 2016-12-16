@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct dynamic_array_st {
+int *parray;
+int filled;
+int capacity;
+} DYN_ARRAY;
+
+DYN_ARRAY init_array(DYN_ARRAY d);
+void print_descriptor(DYN_ARRAY d);
+void print_array(DYN_ARRAY d);
+DYN_ARRAY resize_array(DYN_ARRAY d);
+DYN_ARRAY add(DYN_ARRAY d, int value);
+int size(DYN_ARRAY d);
+DYN_ARRAY destroy_array(DYN_ARRAY d);
+
+int main() {
+DYN_ARRAY d;
+
+printf("Pre inicijalizacije niza...\n");
+print_descriptor(d);
+
+printf("Inicijalizacija niza...\n");
+d = init_array(d);
+print_descriptor(d);
+print_array(d);
+
+printf("Promena velicine niza...\n");
+d = resize_array(d);
+print_descriptor(d);
+print_array(d);
+
+printf("Dodavanje elemenata...\n");
+d = add(d, 1);		
+d = add(d, 2);		
+d = add(d, 3);
+print_descriptor(d);
+print_array(d);
+
+printf("Kapacitet niza: %d\n", size(d));
+
+printf("Unistavanje niza...\n");
+d = destroy_array(d);
+print_descriptor(d);
+print_array(d);
+
+return EXIT_SUCCESS;
+
+}
+
+DYN_ARRAY init_array(DYN_ARRAY d) {
+d.parray = NULL;
+d.filled = 0;
+d.capacity = 0;
+
+return d;
+
+}
+
+void print_descriptor(DYN_ARRAY d) {
+printf("Descriptor:\n");
+printf("\tparray -> %p\n", d.parray);
+printf("\tfilled -> %d\n", d.filled);
+printf("\tcapacity -> %d\n", d.capacity);
+}
+
+void print_array(DYN_ARRAY d) {
+int i;
+
+printf("[");
+for (i = 0; i < d.filled; i++) {
+	if (i != 0)
+		printf(", ");
+	printf("%d", d.parray[i]);
+}
+printf("]\n");
+
+}
+
+DYN_ARRAY resize_array(DYN_ARRAY d) {
+if (d.parray == NULL) {
+d.capacity = 1;
+} else {
+d.capacity *= 2;
+}
+d.parray = realloc(d.parray, d.capacity * sizeof(int));
+
+return d;
+
+}
+
+DYN_ARRAY add(DYN_ARRAY d, int value) {
+if (d.filled == d.capacity) {
+d = resize_array(d);
+}
+d.parray[d.filled] = value;
+d.filled++;
+
+return d;
+
+}
+
+int size(DYN_ARRAY d) {
+return d.capacity;
+}
+
+DYN_ARRAY destroy_array(DYN_ARRAY d) {
+free(d.parray);
+d = init_array(d);
+
+return d;
+
+}
